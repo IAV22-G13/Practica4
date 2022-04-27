@@ -195,13 +195,14 @@ Implementaremos un mapa de influencia basandonos en el algoritmo MapFlooding con
     84 # any city, along with the city they belong to.
     85 return closed
 
-- actualizaremos el gameManager para añadir el input de las teclas F, G y H, que muestren la zona de 
+- Actualizaremos el gameManager para añadir el input de las teclas F, G y H, que muestren la zona de 
 influencia de cada bando, además de los contadores de métricas, que se mostrarán por pantalla.
 
-- un nuevo escenario basado en el siguiente mapa:
+- IA del controlador de un bando.
+
+- Un nuevo escenario basado en el siguiente mapa:
 
   ![MapaReferencia](./mapa.png)  
-
 
 **IMPLEMENTACIÓN FINAL**
 

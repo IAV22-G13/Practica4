@@ -17,7 +17,8 @@ namespace es.ucm.fdi.iav.rts
 {
     /* 
      * El gestor del juego es responsable de poner en marcha el juego, iniciando su estado y llevando un seguimiento de todos sus cambios.
-     * Mantiene el registro de todas las instalaciones y unidades creadas y activas, de manera que los bots t�cticos puedan percibir y actuar en respuesta a situaciones t�cticas como el ser atacados o pillar desprevenida la base enemiga.
+     * Mantiene el registro de todas las instalaciones y unidades creadas y activas, de manera que los bots t�cticos puedan percibir y actuar en respuesta a 
+     * situaciones t�cticas como el ser atacados o pillar desprevenida la base enemiga.
      * 
      * Posibles mejoras:
      * - Mostra una GUI como la que tiene ScenarioManager pero con informaci�n del juego, como nombres y autores de controladores, cantidad total de instalaciones, unidades y salud total de uno y otro jugador.
