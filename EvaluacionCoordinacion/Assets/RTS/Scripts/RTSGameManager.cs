@@ -92,6 +92,10 @@ namespace es.ucm.fdi.iav.rts
         private List<List<ExplorationUnit>> ControllersExplorationUnits { get; set; } = new List<List<ExplorationUnit>>();
         private List<List<DestructionUnit>> ControllersDestructionUnits { get; set; } = new List<List<DestructionUnit>>();
 
+        [SerializeField]
+        Terrain map;
+        public Terrain getMap() { return map; }
+
         // Despierta el Singleton (lo crea) y elimina duplicados de la misma clase que pueda haber en la escena.
         // Inicializa las estructuras internas del estado del juego, como el dinero que se establece inicialmente en 0.
         // Posibles mejoras: 

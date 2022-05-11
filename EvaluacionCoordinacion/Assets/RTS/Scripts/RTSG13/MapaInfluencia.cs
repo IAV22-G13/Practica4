@@ -5,62 +5,105 @@ using UnityEngine;
 
 namespace es.ucm.fdi.iav.rts
 {
-    struct City { };
-    struct Location { };
-    struct Map { };
-    struct LocationRecord
+    struct City
     {
-        Location location;
-        City nearestCity;
-        float strenght;
-    }
-    public class MapaInfluencia : MonoBehaviour
+        public GameObject c;   //Elemento del bando
+        public float strength;
+        public static bool operator ==(City a, City b) => a.c == b.c;
+        public static bool operator !=(City a, City b) => a.c != b.c;
+    };
+    class LocationRecord : IComparable<LocationRecord>
     {
-        //    # The strength function has this format.
-        float strengthFunction(City c, Location l)
-        {
+        public Vertex location;
+        public City nearestCity;
+        public float strenght;
 
+        public int CompareTo(LocationRecord b)
+        {
+            if (this.strenght < b.strenght) return -1;
+            else if (this.strenght > b.strenght) return 1;
             return 0;
         }
-
-        LocationRecord[] mapFloodDijkstra(Map map, City[] cities, float strenghTreshold, Func<City, Location, float> strengthFunction)
+    }
+    public class MapaInfluencia : GraphGrid
+    {
+        //    # The strength function has this format.
+        float strengthFunction(City c, Vector3 l)
         {
+            Vector2 cityPos = IdToGrid(GetNearestVertexId(c.c.transform.position));
+            Vector2 pos = IdToGrid(GetNearestVertexId(l));
 
-            return null;
+            Vector2 dist = new Vector2(Math.Abs(cityPos.x - pos.x), Math.Abs(cityPos.y - pos.y));
+            float d = c.strength - ((int)dist.magnitude * 0.2f);
+            if (d < 0)
+                return 0;
+            return d;
+        }
+
+        List<LocationRecord> mapFloodDijkstra(Graph map, City[] cities, float strenghTreshold, Func<City, Vector3, float> strengthFunction)
+        {
+            List<LocationRecord> open = new List<LocationRecord>();
+            List<LocationRecord> closed = new List<LocationRecord>();
+
+            for (int i = 0; i < cities.Length; i++)
+            {
+                LocationRecord startRecord = new LocationRecord();
+                startRecord.location = map.GetNearestVertex(cities[i].c.transform.position);
+                startRecord.nearestCity = cities[i];
+                startRecord.strenght = cities[i].strength;
+                open.Add(startRecord);
+            }
+
+            while (open.Count > 0)
+            {
+                LocationRecord c = open[0];
+                for (int i = 0; i < neighbors[c.location.id].Count; i++)
+                {
+                    LocationRecord act = new LocationRecord();
+                    act.location = neighbors[c.location.id][i];
+                    float strenght = strengthFunction(c.nearestCity, act.location.transform.position);
+                    act.strenght = strenght;
+                    act.nearestCity = c.nearestCity;
+
+                    if (act.strenght < strenghTreshold)
+                        continue;
+                    else if (closed.Contains(act))
+                    {
+                        act = closed.Find(LocationRecord => LocationRecord.location == act.location);
+                        if (act.nearestCity != c.nearestCity && act.strenght > strenght)
+                            continue;
+                    }
+                    else if (open.Contains(act))
+                    {
+                        act = open.Find(LocationRecord => LocationRecord.location == act.location);
+                        if (act.nearestCity != c.nearestCity && act.strenght > strenght)
+                            continue;
+                    }
+                    else
+                    {
+                        act = new LocationRecord();
+                        act.location = neighbors[c.location.id][i];
+                    }
+
+                    act.nearestCity = c.nearestCity;
+                    act.strenght = strenght;
+
+                    if (!open.Contains(act))
+                        open.Add(act);
+                }
+
+                open.Remove(c);
+                closed.Add(c);
+            }
+            return closed;
         }
     }
     //11 function mapfloodDijkstra(map: Map, cities: City[], strengthThreshold: float, strengthFunction: function) -> LocationRecord[]:
-    //16
-    //17 # Initialize the open and closed lists.
-    //18 open = new PathfindingList()
-    //19 closed = new PathfindingList()
-    //20
-    //21 # Initialize the record for the start nodes.
-    //22 for city in cities:
-    //23 startRecord = new LocationRecord()
-    //24 startRecord.location = city.getLocation()
-    //25 startRecord.city = city
-    //26 startRecord.strength = city.getStrength()
-    //27 open += startRecord
-    //28
     //29 # Iterate through processing each node.
-    //30 while open:
-    //31 # Find the largest element in the open list.
-    //32 current = open.largestElement()
-    //33
-    //34 # Get its neighboring locations.
-    //35 locations = map.getNeighbors(current.location)
-    //36
+
     //37 # Loop through each location in turn.
     //38 for location in locations:
-    //39 # Get the strength for the end node.
-    //40 strength = strengthFunction(current.city, location)
-    //41
-    //42 # Skip if the strength is too low.
-    //43 if strength<strengthThreshold:
-    //6.2 Tactical Analyses 531
-    //44 continue
-    //45
+
     //46 # .. or if closed and we’ve found a worse route.
     //47 else if closed.contains(location):
     //48 # Find the record in the closed list.

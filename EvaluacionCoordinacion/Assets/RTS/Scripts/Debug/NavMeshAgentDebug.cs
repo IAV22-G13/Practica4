@@ -37,7 +37,7 @@ namespace es.ucm.fdi.iav.rts
             line.SetPosition(0, transform.position); //set the line's origin
 
             // Se me ha ocurrido meter este bucle para que se repita todo
-            for (; ; )
+            for (; ;)
             {
 
                 //agent.SetDestination(target.position); //create the path
@@ -79,7 +79,7 @@ namespace es.ucm.fdi.iav.rts
         }
     }
         */
-            public void DrawPath(NavMeshPath path)
+        public void DrawPath(NavMeshPath path)
         {
             if (path.corners.Length < 2) //if the path has 1 or no corners, there is no need
                 return;
@@ -96,4 +96,3 @@ namespace es.ucm.fdi.iav.rts
         }
     }
 }
- 

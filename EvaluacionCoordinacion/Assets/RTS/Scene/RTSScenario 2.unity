@@ -3032,6 +3032,7 @@ MonoBehaviour:
     type: 3}
   _destructionUnitOddPrefab: {fileID: 100000, guid: 671e287d801cb894fab6a4c0a8407efa,
     type: 3}
+  map: {fileID: 1583882779}
 --- !u!1 &1357167914
 GameObject:
   m_ObjectHideFlags: 0
@@ -3209,6 +3210,7 @@ GameObject:
   - component: {fileID: 1583882778}
   - component: {fileID: 1583882781}
   - component: {fileID: 1583882782}
+  - component: {fileID: 1583882783}
   m_Layer: 8
   m_Name: ArrakisScenario
   m_TagString: Untagged
@@ -3315,6 +3317,25 @@ MonoBehaviour:
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
+--- !u!114 &1583882783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583882777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 579f97de0123f8646b5f54037eb8389d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  raySize: 0
+  vertexPrefab: {fileID: 6546271129040476430, guid: 9eb8b6734cb50e74ab6fa4f429fda2ad,
+    type: 3}
+  costs: []
+  path: []
+  get8Vicinity: 0
+  cellSize: 1
 --- !u!4 &1590331110 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9044246699718678023, guid: 92de73666d73e424493d59133c1b188a,
