@@ -29,6 +29,8 @@ namespace es.ucm.fdi.iav.rts
             else if (this.cost > b.cost) return 1;
             return 0;
         }
+        public static bool operator ==(Vertex a, Vertex b) => a.id == b.id;
+        public static bool operator !=(Vertex a, Vertex b) => a.id != b.id;
         /// <summary>
         /// Identificador del vértice 
         /// </summary>

@@ -24,6 +24,26 @@ namespace es.ucm.fdi.iav.rts
             else if (this.strenght > b.strenght) return 1;
             return 0;
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is LocationRecord record &&
+                   EqualityComparer<Vertex>.Default.Equals(location, record.location) &&
+                   EqualityComparer<City>.Default.Equals(nearestCity, record.nearestCity) &&
+                   strenght == record.strenght;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1012343204;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Vertex>.Default.GetHashCode(location);
+            hashCode = hashCode * -1521134295 + nearestCity.GetHashCode();
+            hashCode = hashCode * -1521134295 + strenght.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(LocationRecord a, LocationRecord b) => a.location == b.location && a.nearestCity == b.nearestCity && a.strenght == b.strenght;
+        public static bool operator !=(LocationRecord a, LocationRecord b) => !(a==b);
     }
     public class MapaInfluencia : GraphGrid
     {
@@ -42,6 +62,8 @@ namespace es.ucm.fdi.iav.rts
             float d = c.strength - ((int)dist.magnitude * 0.2f);
             if (d < 0)
                 return 0;
+            if (d > 1)
+                return 1;
             return d;
         }
 
@@ -53,7 +75,7 @@ namespace es.ucm.fdi.iav.rts
             for (int i = 0; i < cities.Length; i++)
             {
                 LocationRecord startRecord = new LocationRecord();
-                startRecord.location = GetNearestVertex(cities[i].c.transform.position - transform.position - new Vector3(cellSize/2, 0, cellSize/2));
+                startRecord.location = GetNearestVertex(cities[i].c.transform.position - transform.position - new Vector3(cellSize / 2, 0, cellSize / 2));
                 startRecord.nearestCity = cities[i];
                 startRecord.strenght = cities[i].strength;
                 open.Add(startRecord);
@@ -77,6 +99,11 @@ namespace es.ucm.fdi.iav.rts
                         act = closed.Find(LocationRecord => LocationRecord.location == act.location);
                         if (act.nearestCity != c.nearestCity && act.strenght > strenght)
                             continue;
+                        else
+                        {
+                            closed.Remove(act);                        
+
+                        }
                     }
                     else if (open.Contains(act))
                     {
@@ -157,15 +184,8 @@ namespace es.ucm.fdi.iav.rts
         {
             for (int i = 0; i < vertexObjs.Length; i++)
             {
-                try
-                {
-                    GameObject o = vertexObjs[i];
-                    o.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0, 0);
-                }
-                catch (Exception e)
-                {
-                    int c = 9;
-                }
+                GameObject o = vertexObjs[i];
+                o.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0, 0);
             }
 
             List<LocationRecord> har = new List<LocationRecord>();
@@ -200,8 +220,8 @@ namespace es.ucm.fdi.iav.rts
                     }
                     else continue;
                 }
-                GameObject o  = vertexObjs[har[i].location.id];
-                o.GetComponent<MeshRenderer>().material.color += Color.red * diff;   
+                GameObject o = vertexObjs[har[i].location.id];
+                o.GetComponent<MeshRenderer>().material.color += Color.red * diff;
             }
 
         }

@@ -29,7 +29,6 @@ namespace es.ucm.fdi.iav.rts
         int numCols;
         int numRows;
         protected GameObject[] vertexObjs;
-        public bool[,] mapVertices;
         int endCass;
 
         protected int GridToId(int x, int y)
@@ -139,7 +138,7 @@ namespace es.ucm.fdi.iav.rts
             {
                 i = (int)p.y;
                 j = (int)p.x;
-                if (i < 0 || j < 0 || i >= numRows || j >= numCols || (i == row && j == col) || !mapVertices[j, i])
+                if (i < 0 || j < 0 || i >= numRows || j >= numCols || (i == row && j == col))
                     continue;
                 int id = GridToId(j, i);
                 neighbors[vertexId].Add(vertices[id]);
@@ -160,7 +159,7 @@ namespace es.ucm.fdi.iav.rts
             {
                 int x = (int)pos[i].y;
                 int y = (int)pos[i].x;
-                if (x < 0 || y < 0 || x >= numRows || y >= numCols || !mapVertices[x, y])
+                if (x < 0 || y < 0 || x >= numRows || y >= numCols)
                     continue;
                 n[i] = costs[GridToId(x, y)];
             }
@@ -180,19 +179,6 @@ namespace es.ucm.fdi.iav.rts
             int row = (int)Mathf.Round(position.z / cellSize);
             
             return GridToId(col, row);
-        }
-
-        public GameObject randCass()
-        {
-            int cass = 0;
-            Vector2 pos;
-            do
-            {
-                cass = UnityEngine.Random.Range(0, vertices.Count - 1);
-                pos = IdToGrid(cass);
-            }
-            while (!mapVertices[(int)pos.x, (int)pos.y]);
-            return vertices[cass].gameObject;
         }
 
     }
