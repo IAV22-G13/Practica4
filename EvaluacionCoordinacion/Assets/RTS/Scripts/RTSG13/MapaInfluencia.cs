@@ -27,6 +27,11 @@ namespace es.ucm.fdi.iav.rts
     }
     public class MapaInfluencia : GraphGrid
     {
+
+        private bool harkonnen = true;
+        private bool fremen = false;
+        private bool graben = false;
+
         //    # The strength function has this format.
         float strengthFunction(City c, Vector3 l)
         {
@@ -40,7 +45,7 @@ namespace es.ucm.fdi.iav.rts
             return d;
         }
 
-        List<LocationRecord> mapFloodDijkstra(Graph map, City[] cities, float strenghTreshold, Func<City, Vector3, float> strengthFunction)
+        List<LocationRecord> mapFloodDijkstra(City[] cities, float strenghTreshold, Func<City, Vector3, float> strengthFunction)
         {
             List<LocationRecord> open = new List<LocationRecord>();
             List<LocationRecord> closed = new List<LocationRecord>();
@@ -48,7 +53,7 @@ namespace es.ucm.fdi.iav.rts
             for (int i = 0; i < cities.Length; i++)
             {
                 LocationRecord startRecord = new LocationRecord();
-                startRecord.location = map.GetNearestVertex(cities[i].c.transform.position);
+                startRecord.location = GetNearestVertex(cities[i].c.transform.position - transform.position - new Vector3(cellSize/2, 0, cellSize/2));
                 startRecord.nearestCity = cities[i];
                 startRecord.strenght = cities[i].strength;
                 open.Add(startRecord);
@@ -97,52 +102,108 @@ namespace es.ucm.fdi.iav.rts
             }
             return closed;
         }
+
+        private City[] getUnits(int i)
+        {
+            List<BaseFacility> facilyBase = RTSGameManager.Instance.GetBaseFacilities(i);
+            List<ProcessingFacility> facilyProccess = RTSGameManager.Instance.GetProcessingFacilities(i);
+            List<ExtractionUnit> extraction = RTSGameManager.Instance.GetExtractionUnits(i);
+            List<ExplorationUnit> explorer = RTSGameManager.Instance.GetExplorationUnits(i);
+            List<DestructionUnit> destruction = RTSGameManager.Instance.GetDestructionUnits(i);
+
+            int sum = facilyBase.Count + facilyProccess.Count + extraction.Count + explorer.Count + destruction.Count;
+            City[] c = new City[sum];
+
+            int k = 0;
+            for (int j = 0; j < facilyBase.Count; j++)
+            {
+                c[k].c = facilyBase[j].gameObject;
+                c[k].strength = 1.0f;
+                k++;
+            }
+
+            for (int j = 0; j < facilyProccess.Count; j++)
+            {
+                c[k].c = facilyProccess[j].gameObject;
+                c[k].strength = 0.75f;
+                k++;
+            }
+
+            for (int j = 0; j < extraction.Count; j++)
+            {
+                c[k].c = extraction[j].gameObject;
+                c[k].strength = 0.3f;
+                k++;
+            }
+
+            for (int j = 0; j < explorer.Count; j++)
+            {
+                c[k].c = explorer[j].gameObject;
+                c[k].strength = 0.45f;
+                k++;
+            }
+
+            for (int j = 0; j < destruction.Count; j++)
+            {
+                c[k].c = destruction[j].gameObject;
+                c[k].strength = 0.6f;
+                k++;
+            }
+
+            return c;
+        }
+
+        public void Update()
+        {
+            for (int i = 0; i < vertexObjs.Length; i++)
+            {
+                try
+                {
+                    GameObject o = vertexObjs[i];
+                    o.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0, 0);
+                }
+                catch (Exception e)
+                {
+                    int c = 9;
+                }
+            }
+
+            List<LocationRecord> har = new List<LocationRecord>();
+            List<LocationRecord> fre = new List<LocationRecord>();
+            List<LocationRecord> gra = new List<LocationRecord>();
+
+            if (harkonnen)
+            {
+                City[] c = getUnits(0);
+                har = mapFloodDijkstra(c, 0.01f, strengthFunction);
+            }
+            if (fremen)
+            {
+                City[] c = getUnits(1);
+                fre = mapFloodDijkstra(c, 0.01f, strengthFunction);
+            }
+            if (graben)
+            {
+
+            }
+
+            for (int i = 0; i < har.Count; i++)
+            {
+                float diff = har[i].strenght;
+                if (fre.Contains(har[i]))
+                {
+                    LocationRecord l = fre.Find(LocationRecord => LocationRecord.location == har[i].location);
+                    diff -= l.strenght;
+                    if (diff > 0)
+                    {
+                        fre.Remove(har[i]);
+                    }
+                    else continue;
+                }
+                GameObject o  = vertexObjs[har[i].location.id];
+                o.GetComponent<MeshRenderer>().material.color += Color.red * diff;   
+            }
+
+        }
     }
-    //11 function mapfloodDijkstra(map: Map, cities: City[], strengthThreshold: float, strengthFunction: function) -> LocationRecord[]:
-    //29 # Iterate through processing each node.
-
-    //37 # Loop through each location in turn.
-    //38 for location in locations:
-
-    //46 # .. or if closed and we’ve found a worse route.
-    //47 else if closed.contains(location):
-    //48 # Find the record in the closed list.
-    //49 neighborRecord = closed.find(location)
-    //50 if neighborRecord.city != current.city and
-    //51 neighborRecord.strength<strength:
-    //52 continue
-    //53
-    //54 # .. or if it is open and we’ve found a worse
-    //55 # route.
-    //56 else if open.contains(location):
-    //57 # Find the record in the open list.
-    //58 neighborRecord = open.find(location)
-    //59 if neighborRecord.strength<strength:
-    //60 continue
-    //61
-    //62 # Otherwise we know we’ve got an unvisited
-    //63 # node, so make a record for it.
-    //64 else:
-    //65 neighborRecord = new NodeRecord()
-    //66 neighborRecord.location = location
-    //67
-    //68 # We’re here if we need to update the node
-    //69 # Update the cost and connection.
-    //70 neighborRecord.city = current.city
-    //71 neighborRecord.strength = strength
-    //72
-    //73 # And add it to the open list.
-    //74 if not open.contains(location):
-    //75 open += neighborRecord
-    //76
-    //77 # We’ve finished looking at the neighbors for the current
-    //78 # node, so add it to the closed list and remove it from the
-    //79 # open list.
-    //80 open -= current
-    //81 closed += current
-    //82
-    //83 # The closed list now contains all the locations that belong to
-    //84 # any city, along with the city they belong to.
-    //85 return closed
-
 }

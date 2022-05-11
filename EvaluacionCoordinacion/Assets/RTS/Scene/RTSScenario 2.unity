@@ -3326,7 +3326,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1583882777}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 579f97de0123f8646b5f54037eb8389d, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c34af85fd0d68a408299477e14e7c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   raySize: 0
@@ -3334,8 +3334,8 @@ MonoBehaviour:
     type: 3}
   costs: []
   path: []
-  get8Vicinity: 0
-  cellSize: 1
+  get8Vicinity: 1
+  cellSize: 10
 --- !u!4 &1590331110 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9044246699718678023, guid: 92de73666d73e424493d59133c1b188a,

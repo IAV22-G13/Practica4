@@ -28,13 +28,13 @@ namespace es.ucm.fdi.iav.rts
 
         int numCols;
         int numRows;
-        GameObject[] vertexObjs;
+        protected GameObject[] vertexObjs;
         public bool[,] mapVertices;
         int endCass;
 
         protected int GridToId(int x, int y)
         {
-            return Math.Max(numRows, numCols) * y + x;
+            return numCols * y + x;
         }
 
         public Vector2 IdToGrid(int id)
@@ -139,7 +139,7 @@ namespace es.ucm.fdi.iav.rts
             {
                 i = (int)p.y;
                 j = (int)p.x;
-                if (i < 0 || j < 0 || i >= numRows || j >= numCols || (i == row && j == col) || !mapVertices[i, j])
+                if (i < 0 || j < 0 || i >= numRows || j >= numCols || (i == row && j == col) || !mapVertices[j, i])
                     continue;
                 int id = GridToId(j, i);
                 neighbors[vertexId].Add(vertices[id]);
@@ -171,7 +171,7 @@ namespace es.ucm.fdi.iav.rts
         {
             int col = (int)Mathf.Round(position.x / cellSize);
             int row = (int)Mathf.Round(position.z / cellSize);
-            int id = GridToId(col, row);
+            int id = GridToId(row, col);
             return vertices[id];
         }
         public int GetNearestVertexId(Vector3 position)
