@@ -17,7 +17,7 @@ namespace es.ucm.fdi.iav.rts.example2
      * Ejemplo básico sobre cómo crear un controlador basado en IA para el minijuego RTS.
      * Únicamente mandan unas órdenes cualquiera, para probar cosas aleatorias... pero no realiza análisis táctico, ni considera puntos de ruta tácticos, ni coordina acciones de ningún tipo .
      */ 
-    public class RTSAIControllerExample2: RTSAIController
+    public class RTSAIControllerExample2 : RTSAIController
     {
         // No necesita guardar mucha información porque puede consultar la que desee por sondeo, incluida toda la información de instalaciones y unidades, tanto propias como ajenas
 
