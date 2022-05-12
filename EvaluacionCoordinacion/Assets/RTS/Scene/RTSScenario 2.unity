@@ -3336,6 +3336,7 @@ MonoBehaviour:
   path: []
   get8Vicinity: 1
   cellSize: 10
+  actFloorPaint: 1.2
 --- !u!4 &1590331110 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9044246699718678023, guid: 92de73666d73e424493d59133c1b188a,

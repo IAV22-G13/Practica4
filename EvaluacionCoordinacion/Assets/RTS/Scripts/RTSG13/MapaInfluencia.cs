@@ -17,11 +17,12 @@ namespace es.ucm.fdi.iav.rts
         public Vertex location;
         public City nearestCity;
         public float strenght;
+        public delegate int Comparison<in T>(T x, T y);
 
         public int CompareTo(LocationRecord b)
         {
-            if (this.strenght < b.strenght) return -1;
-            else if (this.strenght > b.strenght) return 1;
+            if (this.strenght > b.strenght) return -1;
+            else if (this.strenght < b.strenght) return 1;
             return 0;
         }
 
@@ -42,17 +43,35 @@ namespace es.ucm.fdi.iav.rts
             return hashCode;
         }
 
-        public static bool operator ==(LocationRecord a, LocationRecord b) => a.location == b.location && a.nearestCity == b.nearestCity && a.strenght == b.strenght;
-        public static bool operator !=(LocationRecord a, LocationRecord b) => !(a==b);
+        public static bool operator ==(LocationRecord a, LocationRecord b)
+        {
+            if (a is null)
+                return b is null;
+            if (b is null)
+                return a is null;
+            return a.location == b.location && a.nearestCity == b.nearestCity && a.strenght == b.strenght;
+        }
+        public static bool operator !=(LocationRecord a, LocationRecord b) => !(a == b);
     }
     public class MapaInfluencia : GraphGrid
     {
 
         private bool harkonnen = true;
-        private bool fremen = false;
+        private bool fremen = true;
         private bool graben = false;
 
+        [SerializeField]
+        float actFloorPaint = 2.0f;
+        float timer;
+        List<GameObject> painted;
+
         //    # The strength function has this format.
+
+        public void Awake()
+        {
+            painted = new List<GameObject>();
+            timer = actFloorPaint;
+        }
         float strengthFunction(City c, Vector3 l)
         {
             Vector2 cityPos = IdToGrid(GetNearestVertexId(c.c.transform.position));
@@ -83,6 +102,7 @@ namespace es.ucm.fdi.iav.rts
 
             while (open.Count > 0)
             {
+                open.Sort();
                 LocationRecord c = open[0];
                 for (int i = 0; i < neighbors[c.location.id].Count; i++)
                 {
@@ -97,24 +117,14 @@ namespace es.ucm.fdi.iav.rts
                     else if (closed.Contains(act))
                     {
                         act = closed.Find(LocationRecord => LocationRecord.location == act.location);
-                        if (act.nearestCity != c.nearestCity && act.strenght > strenght)
+                        if ((act.nearestCity != c.nearestCity && act.strenght > strenght) || (act.nearestCity == c.nearestCity))
                             continue;
-                        else
-                        {
-                            closed.Remove(act);                        
-
-                        }
                     }
                     else if (open.Contains(act))
                     {
                         act = open.Find(LocationRecord => LocationRecord.location == act.location);
-                        if (act.nearestCity != c.nearestCity && act.strenght > strenght)
+                        if ((act.nearestCity != c.nearestCity && act.strenght > strenght) || (act.nearestCity == c.nearestCity))
                             continue;
-                    }
-                    else
-                    {
-                        act = new LocationRecord();
-                        act.location = neighbors[c.location.id][i];
                     }
 
                     act.nearestCity = c.nearestCity;
@@ -125,6 +135,8 @@ namespace es.ucm.fdi.iav.rts
                 }
 
                 open.Remove(c);
+                if (closed.Contains(c))
+                    closed.Remove(c);
                 closed.Add(c);
             }
             return closed;
@@ -159,7 +171,7 @@ namespace es.ucm.fdi.iav.rts
             for (int j = 0; j < extraction.Count; j++)
             {
                 c[k].c = extraction[j].gameObject;
-                c[k].strength = 0.3f;
+                c[k].strength = 0.34f;
                 k++;
             }
 
@@ -173,7 +185,7 @@ namespace es.ucm.fdi.iav.rts
             for (int j = 0; j < destruction.Count; j++)
             {
                 c[k].c = destruction[j].gameObject;
-                c[k].strength = 0.6f;
+                c[k].strength = 0.61f;
                 k++;
             }
 
@@ -182,11 +194,22 @@ namespace es.ucm.fdi.iav.rts
 
         public void Update()
         {
-            for (int i = 0; i < vertexObjs.Length; i++)
+            timer += Time.deltaTime;
+            if (timer > actFloorPaint)
             {
-                GameObject o = vertexObjs[i];
+                Colour();
+                timer = 0;
+            }
+        }
+
+        private void Colour()
+        {
+            for (int i = 0; i < painted.Count; i++)
+            {
+                GameObject o = painted[i];
                 o.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0, 0);
             }
+            painted.Clear();
 
             List<LocationRecord> har = new List<LocationRecord>();
             List<LocationRecord> fre = new List<LocationRecord>();
@@ -195,35 +218,42 @@ namespace es.ucm.fdi.iav.rts
             if (harkonnen)
             {
                 City[] c = getUnits(0);
-                har = mapFloodDijkstra(c, 0.01f, strengthFunction);
+                har = mapFloodDijkstra(c, 0.09f, strengthFunction);
             }
             if (fremen)
             {
                 City[] c = getUnits(1);
-                fre = mapFloodDijkstra(c, 0.01f, strengthFunction);
+                fre = mapFloodDijkstra(c, 0.09f, strengthFunction);
             }
             if (graben)
             {
 
             }
 
-            for (int i = 0; i < har.Count; i++)
+            for (int i = 0; i < Math.Max(har.Count, fre.Count); i++)
             {
-                float diff = har[i].strenght;
-                if (fre.Contains(har[i]))
+                if (i < har.Count)
                 {
-                    LocationRecord l = fre.Find(LocationRecord => LocationRecord.location == har[i].location);
-                    diff -= l.strenght;
-                    if (diff > 0)
-                    {
-                        fre.Remove(har[i]);
-                    }
-                    else continue;
+                    float diff = har[i].strenght;
+                    GameObject o = vertexObjs[har[i].location.id];
+                    o.GetComponent<MeshRenderer>().material.color += Color.red * diff;
+                    painted.Add(o);
                 }
-                GameObject o = vertexObjs[har[i].location.id];
-                o.GetComponent<MeshRenderer>().material.color += Color.red * diff;
-            }
 
+                if (i < fre.Count)
+                {
+                    float diff = fre[i].strenght;
+                    GameObject o = vertexObjs[fre[i].location.id];
+                    Color act = o.GetComponent<MeshRenderer>().material.color;
+                    act += Color.blue * diff;
+                    if (act.r > 1) act.r = 1;
+                    if (act.g > 1) act.g = 1;
+                    if (act.b > 1) act.b = 1;
+                    if (act.a > 1) act.a = 1;
+                    o.GetComponent<MeshRenderer>().material.color = act;
+                    painted.Add(o);
+                }
+            }
         }
     }
 }
