@@ -411,6 +411,7 @@ namespace es.ucm.fdi.iav.rts
 
         // Cuando una unidad va a ser destruida, avisa antes de autodestruirse para que se la elimine de las listas del gestor del juego.
         // Posibles mejoras: 
+        // Posibles mejoras: 
         // - Se podr�a ir llevando una puntuaci�n de cuantas unidades ha destruido cada ej�rcito, por ejemplo... junto con otras estad�sticas
         public void UnitDestroyed(Unit unit) {
             if (unit == null)
