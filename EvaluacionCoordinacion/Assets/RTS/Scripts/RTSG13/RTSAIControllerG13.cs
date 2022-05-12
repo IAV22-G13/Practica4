@@ -62,7 +62,8 @@ namespace es.ucm.fdi.iav.rts
         private Unit LastUnit { get; set; }
         private List<Unit> peloton = new List<Unit>();
 
-        private float defendRange = 10.5f;
+        private int defendRange = 10;
+        private int dangerRange = 20;
 
         private int explorerBaseCount = 0;
         private int explorerProcessingCount = 0;
@@ -117,7 +118,8 @@ namespace es.ucm.fdi.iav.rts
 
             for (int i = 0; i < peloton.Count; i++)
             {
-                RTSGameManager.Instance.MoveUnit(this, peloton[i], objectiveT);
+                if (peloton[i] != null && objectiveT != null)
+                    RTSGameManager.Instance.MoveUnit(this, peloton[i], objectiveT);
             }
             peloton.Clear();
 
@@ -266,8 +268,19 @@ namespace es.ucm.fdi.iav.rts
             else if (MyProcessingFacility != null) 
             {
                 Transform t = MyProcessingFacility.gameObject.transform;
-                float r = Random.Range(-defendRange, defendRange);
-                float f = Random.Range(-defendRange, defendRange);
+                int r = Random.Range(0, 2);
+                if (r == 0)
+                {
+                    r = defendRange;
+                }
+                else if (r == 1)
+                    r = -defendRange;
+                float f = Random.Range(0, 2);
+                if (f == 0)
+                {
+                    f = defendRange;
+                }
+                else f = -defendRange;
                 t.position = new Vector3(t.position.x + r, t.position.y, t.position.z + f);
                 RTSGameManager.Instance.MoveUnit(this, u, t);
             }
@@ -322,8 +335,8 @@ namespace es.ucm.fdi.iav.rts
 
         bool inRange(Transform unit, Transform place)
         {
-            return (place.position.x - defendRange < unit.position.x && place.position.x + defendRange > unit.position.x &&
-                place.position.z - defendRange < unit.position.z && place.position.z + defendRange > unit.position.z);
+            return (place.position.x - dangerRange < unit.position.x && place.position.x + dangerRange > unit.position.x &&
+                place.position.z - dangerRange < unit.position.z && place.position.z + dangerRange > unit.position.z);
         }
     }
 }
