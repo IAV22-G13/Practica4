@@ -58,7 +58,7 @@ namespace es.ucm.fdi.iav.rts
 
         private bool harkonnen = true;
         private bool fremen = true;
-        private bool graben = true;
+        private bool graben = false;
 
         [SerializeField]
         float actFloorPaint = 2.0f;
@@ -144,29 +144,13 @@ namespace es.ucm.fdi.iav.rts
 
         private City[] getUnits(int i)
         {
-            List<BaseFacility> facilyBase = new List<BaseFacility>();
-            List<ProcessingFacility> facilyProccess = new List<ProcessingFacility>();
-            List<ExtractionUnit> extraction = new List<ExtractionUnit>();
-            List<ExplorationUnit> explorer = new List<ExplorationUnit>();
-            List<DestructionUnit> destruction = new List<DestructionUnit>();
-            List<Village> vilages = new List<Village>();
-            List<Tower> towers = new List<Tower>();
+            List<BaseFacility> facilyBase = RTSGameManager.Instance.GetBaseFacilities(i);
+            List<ProcessingFacility> facilyProccess = RTSGameManager.Instance.GetProcessingFacilities(i);
+            List<ExtractionUnit> extraction = RTSGameManager.Instance.GetExtractionUnits(i);
+            List<ExplorationUnit> explorer = RTSGameManager.Instance.GetExplorationUnits(i);
+            List<DestructionUnit> destruction = RTSGameManager.Instance.GetDestructionUnits(i);
 
-            if (i != -1)
-            {
-                facilyBase = RTSGameManager.Instance.GetBaseFacilities(i);
-                facilyProccess = RTSGameManager.Instance.GetProcessingFacilities(i);
-                extraction = RTSGameManager.Instance.GetExtractionUnits(i);
-                explorer = RTSGameManager.Instance.GetExplorationUnits(i);
-                destruction = RTSGameManager.Instance.GetDestructionUnits(i);
-            }
-            else
-            {
-                vilages = RTSScenarioManager.Instance.Villages;
-                towers = RTSScenarioManager.Instance.Towers;
-            }
-
-            int sum = facilyBase.Count + facilyProccess.Count + extraction.Count + explorer.Count + destruction.Count + vilages.Count + towers.Count;
+            int sum = facilyBase.Count + facilyProccess.Count + extraction.Count + explorer.Count + destruction.Count;
             City[] c = new City[sum];
 
             int k = 0;
@@ -202,20 +186,6 @@ namespace es.ucm.fdi.iav.rts
             {
                 c[k].c = destruction[j].gameObject;
                 c[k].strength = 0.61f;
-                k++;
-            }
-
-            for (int j = 0; j < vilages.Count; j++)
-            {
-                c[k].c = vilages[j].gameObject;
-                c[k].strength = 1.0f;
-                k++;
-            }
-            
-            for (int j = 0; j < towers.Count; j++)
-            {
-                c[k].c = towers[j].gameObject;
-                c[k].strength = 0.8f;
                 k++;
             }
 
@@ -257,8 +227,7 @@ namespace es.ucm.fdi.iav.rts
             }
             if (graben)
             {
-                City[] c = getUnits(-1);
-                gra = mapFloodDijkstra(c, 0.09f, strengthFunction);
+
             }
 
             for (int i = 0; i < Math.Max(har.Count, fre.Count); i++)
@@ -270,18 +239,18 @@ namespace es.ucm.fdi.iav.rts
                     o.GetComponent<MeshRenderer>().material.color += Color.red * diff;
                     painted.Add(o);
                 }
+
                 if (i < fre.Count)
                 {
                     float diff = fre[i].strenght;
                     GameObject o = vertexObjs[fre[i].location.id];
-                    o.GetComponent<MeshRenderer>().material.color += Color.blue * diff;
-                    painted.Add(o);
-                }
-                if (i < gra.Count)
-                {
-                    float diff = gra[i].strenght;
-                    GameObject o = vertexObjs[gra[i].location.id];
-                    o.GetComponent<MeshRenderer>().material.color += Color.green * diff;
+                    Color act = o.GetComponent<MeshRenderer>().material.color;
+                    act += Color.blue * diff;
+                    if (act.r > 1) act.r = 1;
+                    if (act.g > 1) act.g = 1;
+                    if (act.b > 1) act.b = 1;
+                    if (act.a > 1) act.a = 1;
+                    o.GetComponent<MeshRenderer>().material.color = act;
                     painted.Add(o);
                 }
             }
