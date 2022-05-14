@@ -206,7 +206,31 @@ influencia de cada bando, además de los contadores de métricas, que se mostrar
 
 **IMPLEMENTACIÓN FINAL**
 
+El mapa de influencias se realiza siguiendo el pseudocódigo tal y como explicamos 
+en los comportamientos a añadir. Se muestran las influencias de los tres bandos: los 
+harkonen azules, los fremen rojos, y los neutros verdes.
 
+Respecto a la IA realizada, es una IA sencilla con 4 estados distintos:
+Attack, Deffend, Save, Battling. 
 
+-Battling: cuando tiene superiroridad militar ataca a los recursos de los enemigos para que no puedan
+comprar nuevas tropas.
+
+-Attack: cuando el enemigo esta completamente indefenso, atacan sus edificios para acabar con ellos.
+
+-Deffend: cuando les amenaza el enemigo, priorizan la compra de defensas y protegen sus recursos.
+
+-Save: cuando tiene poco dinero, prioriza la economia, los extractores y recuperar recursos.
+
+Los estados son más complejos pero este es un breve resumen de su funcionalidad.
+
+Además hemos hecho un mapa nuevo, basado en la imagen que mostramos anteriormente.
+
+Hemos conseguido robustez en el funcionamiento de la IA, estos no se quedan atrapados en el terreno, ni entre tropas aliadas o enemigas,
+además reaccionan muy rápido a cambios en el escenario, como por ejemplo, cuando atacan, si pierden muchas tropas, se retiran para recuperarse.
+
+Se muestra en todo el momento, el dinero y la tactica que se utiliza.
+
+En el video se muestran las especificaciones requeridas en el enunciado de la practica:
 Video YouTube: 
     
