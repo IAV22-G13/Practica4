@@ -232,5 +232,4 @@ además reaccionan muy rápido a cambios en el escenario, como por ejemplo, cuan
 Se muestra en todo el momento, el dinero y la tactica que se utiliza.
 
 En el video se muestran las especificaciones requeridas en el enunciado de la practica:
-Video YouTube: 
-    
+Video YouTube: https://youtu.be/vJliOHNtysQ    
