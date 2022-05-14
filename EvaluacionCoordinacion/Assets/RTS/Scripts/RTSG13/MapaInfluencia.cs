@@ -224,6 +224,22 @@ namespace es.ucm.fdi.iav.rts
 
         public void Update()
         {
+            if (Input.GetKeyDown("h"))
+            {
+                harkonnen = !harkonnen;
+            }
+            if (Input.GetKeyDown("f"))
+            {
+                fremen = !fremen;
+            }
+            if (Input.GetKeyDown("g"))
+            {
+                graben = !graben;
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
             timer += Time.deltaTime;
             if (timer > actFloorPaint)
             {
@@ -260,8 +276,8 @@ namespace es.ucm.fdi.iav.rts
                 City[] c = getUnits(-1);
                 gra = mapFloodDijkstra(c, 0.09f, strengthFunction);
             }
-
-            for (int i = 0; i < Math.Max(har.Count, fre.Count); i++)
+            int max = Math.Max(har.Count, fre.Count);
+            for (int i = 0; i < Math.Max(max, gra.Count); i++)
             {
                 if (i < har.Count)
                 {
