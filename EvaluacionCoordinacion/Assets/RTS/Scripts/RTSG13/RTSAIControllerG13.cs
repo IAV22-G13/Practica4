@@ -21,7 +21,7 @@ namespace es.ucm.fdi.iav.rts
      */
     public enum Creations
     {
-        CreateExtractor, CreateExplorer, CreateDestructor, 
+        CreateExtractor, CreateExplorer, CreateDestructor,
         Nothing
     }
 
@@ -90,11 +90,11 @@ namespace es.ucm.fdi.iav.rts
 
             money = new GUIStyle();
             money.fontSize = 16;
-            money.normal.textColor = Color.black;
+            money.normal.textColor = Color.white;
 
             tacticTag = new GUIStyle();
             tacticTag.fontSize = 11;
-            tacticTag.normal.textColor = Color.black;
+            tacticTag.normal.textColor = Color.white    ;
         }
 
         // El método de pensar que sobreescribe e implementa el controlador, para percibir (hacer mapas de influencia, etc.) y luego actuar.
@@ -185,14 +185,14 @@ namespace es.ucm.fdi.iav.rts
 
                             for (int i = 0; i < explorers.Count; i++)
                             {
-                                Transform tr;
+                                Transform tr = null;
                                 if (EnemyProcessingFacility && explorers.Count / 2 < i)
                                 {
                                     tr = EnemyProcessingFacility.transform;
                                 }
-                                else tr = EnemyBaseFacility.transform;
+                                else if(EnemyBaseFacility) tr = EnemyBaseFacility.transform;
 
-                                if (explorers[i].Radius < (explorers[i].transform.position - tr.position).magnitude)
+                                if (tr != null && explorers[i].Radius < (explorers[i].transform.position - tr.position).magnitude)
                                 {
                                     explorers[i].Move(this, tr);
                                 }
@@ -200,12 +200,12 @@ namespace es.ucm.fdi.iav.rts
                             }
 
                             int moneyAttack = RTSGameManager.Instance.GetMoney(MyIndex);
-                            
+
                             if (explorers.Count + 2 > destructors.Count && moneyAttack >= RTSGameManager.Instance.DestructionUnitCost && destructors.Count < RTSGameManager.Instance.DestructionUnitsMax)
                             {
                                 RTSGameManager.Instance.CreateUnit(this, MyBaseFacility, RTSGameManager.UnitType.DESTRUCTION);
                             }
-                            else  if (moneyAttack >= RTSGameManager.Instance.ExplorationUnitCost && explorers.Count < RTSGameManager.Instance.ExplorationUnitsMax)
+                            else if (moneyAttack >= RTSGameManager.Instance.ExplorationUnitCost && explorers.Count < RTSGameManager.Instance.ExplorationUnitsMax)
                             {
                                 RTSGameManager.Instance.CreateUnit(this, MyBaseFacility, RTSGameManager.UnitType.EXPLORATION);
                             }
@@ -276,10 +276,10 @@ namespace es.ucm.fdi.iav.rts
                             }
                             break;
                         case Tactics.Defend:
-                            
+
                             if (needToProtectBase())
                             {
-                                for (int i = 0; i < destructors.Count/2; i++)
+                                for (int i = 0; i < destructors.Count / 2; i++)
                                 {
                                     Transform tr = MyBaseFacility.transform;
 
@@ -471,7 +471,7 @@ namespace es.ucm.fdi.iav.rts
             bool occupied = false;
             int taken = -1;
             for (int i = 0; i < resources.Count; i++)
-            { 
+            {
                 float resourceDist = (e.transform.position - resources[i].transform.position).magnitude;
                 if (!resourcesOccupied[i] && resourceDist < distance)
                 {
@@ -487,7 +487,8 @@ namespace es.ucm.fdi.iav.rts
             }
         }
 
-        bool needToProtect() {
+        bool needToProtect()
+        {
             bool enemy = false;
             float closestEnemyInProcessingRange = 1000000;
             for (int i = 0; i < enemyExplorer.Count; i++)

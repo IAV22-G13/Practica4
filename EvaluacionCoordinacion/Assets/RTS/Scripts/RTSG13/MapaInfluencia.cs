@@ -61,7 +61,7 @@ namespace es.ucm.fdi.iav.rts
         private bool graben = true;
 
         [SerializeField]
-        float actFloorPaint = 2.0f;
+        float actFloorPaint = 1.0f;
         float timer;
         List<GameObject> painted;
 
